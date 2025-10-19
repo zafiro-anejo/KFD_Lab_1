@@ -3,13 +3,13 @@ open class UserManager {
 
     protected fun validateUserNotExists(userName: String) {
         if (userExistenceStatus(userName)) {
-            throw IllegalArgumentException("[ОШИБКА]Пользователь ${userName} уже существует!")
+            throw IllegalArgumentException("[ОШИБКА]Пользователь $userName уже существует!")
         }
     }
 
     protected fun validateUserExists(userName: String) {
         if (!userExistenceStatus(userName)) {
-            throw IllegalArgumentException("[ОШИБКА]Пользователь ${userName} не существует!")
+            throw IllegalArgumentException("[ОШИБКА]Пользователь $userName не существует!")
         }
     }
 
@@ -18,7 +18,7 @@ open class UserManager {
     }
 
 
-    fun registerUser(userName: String): Unit {
+    fun registerUser(userName: String) {
         validateUserNotExists(userName)
 
         userBalances[userName] = mutableMapOf(
@@ -45,7 +45,7 @@ open class UserManager {
         return moneyDataForDisplay
     }
 
-    fun updateUserBalance(userName: String, newBalances: Map<String, Long>): Unit {
+    fun updateUserBalance(userName: String, newBalances: Map<String, Long>) {
         validateUserExists(userName)
 
         userBalances[userName]!!.putAll(newBalances)

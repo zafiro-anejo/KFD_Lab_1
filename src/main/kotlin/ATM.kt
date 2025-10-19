@@ -5,12 +5,19 @@ class ATM : UserManager() {
         currenciesInitialization()
     }
 
-    private fun currenciesInitialization(): Unit {
+    private fun currenciesInitialization() {
 
         val currencies = listOf(
             ExchangeLogic("RUB", "USD") to 8082L,
             ExchangeLogic("RUB", "EUR") to 9371L,
-            ExchangeLogic("USD", "EUR") to 116L
+            ExchangeLogic("USD", "EUR") to 116L,
+            ExchangeLogic("RUB", "BTC") to 3_500_000_000L,
+            ExchangeLogic("RUB", "ETH") to 200_000_000L,
+            ExchangeLogic("USD", "BTC") to 43_000_000L,
+            ExchangeLogic("USD", "ETH") to 2_500_000L,
+            ExchangeLogic("EUR", "BTC") to 39_000_000L,
+            ExchangeLogic("EUR", "ETH") to 2_200_000L,
+            ExchangeLogic("BTC", "ETH") to 58_000_000L
         )
 
         exchangeRates.putAll(currencies)
@@ -32,17 +39,20 @@ class ATM : UserManager() {
 
         checkBalancesForMoney(balances, initialCurrency, moneyQuantity)
 
-        val exchangeRate = exchangeRates[rateExchangeKey]!!
+        val exchangeRate = exchangeRates[rateExchangeKey]
+            ?: throw IllegalStateException("[ОШИБКА]Курс обмена для пары $initialCurrency/$demandedCurrency не найден!")
 
         val receivedMoneyQuantity = if (rateExchangeKey.initialCurrency == initialCurrency) {
-            (moneyQuantity * 100) / exchangeRate
+            (moneyQuantity * CurrencyLogic.getDivisor(demandedCurrency)) / exchangeRate
         } else {
-            (moneyQuantity * exchangeRate) / 100
+            (moneyQuantity * exchangeRate) / CurrencyLogic.getDivisor(initialCurrency)
         }
 
         val newBalances = balances.toMutableMap()
+        val currentInitialBalance = newBalances[initialCurrency]
+            ?: throw IllegalStateException("[ОШИБКА]Баланс по валюте $initialCurrency не найден!")
 
-        newBalances[initialCurrency] = newBalances[initialCurrency]!! - moneyQuantity
+        newBalances[initialCurrency] = currentInitialBalance - moneyQuantity
         newBalances[demandedCurrency] = (newBalances[demandedCurrency] ?: 0L) + receivedMoneyQuantity
 
         updateUserBalance(userName, newBalances)
@@ -53,8 +63,9 @@ class ATM : UserManager() {
     }
 
     private fun updateExchangeRate(exchangeCurrenciesPair: ExchangeLogic) {
-        val currentExchangeRate = exchangeRates[exchangeCurrenciesPair]!!
-        val percentageChange = (-5..6).random()
+        val currentExchangeRate = exchangeRates[exchangeCurrenciesPair]
+            ?: throw IllegalStateException("[ОШИБКА]Курс обмена для пары ${exchangeCurrenciesPair.initialCurrency}/${exchangeCurrenciesPair.demandedCurrency} не найден!")
+        val percentageChange = (-5..5).random()
         val newExchangeRate = currentExchangeRate + (currentExchangeRate * percentageChange) / 100
 
         exchangeRates[exchangeCurrenciesPair] = maxOf(newExchangeRate, 1L)
@@ -62,10 +73,14 @@ class ATM : UserManager() {
 
     fun exchangeRatesDisplay(): Map<ExchangeLogic, String> {
         val exchangeRatesData = exchangeRates.mapValues { (exchangeCurrenciesPair, rateExchange) ->
-            "1 ${exchangeCurrenciesPair.demandedCurrency} = ${"%.2f".format(rateExchange / 100.0)} ${exchangeCurrenciesPair.initialCurrency}"
+            val divisor = CurrencyLogic.getDivisor(exchangeCurrenciesPair.initialCurrency)
+            val integerPart = rateExchange / divisor
+            val fractionalValue = rateExchange % divisor
+            val fractionalPart = (fractionalValue * 100) / divisor
+
+            "1 ${exchangeCurrenciesPair.demandedCurrency} = $integerPart.${fractionalPart.toString().padStart(2, '0')} ${exchangeCurrenciesPair.initialCurrency}"
         }
 
         return exchangeRatesData
     }
-
 }

@@ -1,5 +1,3 @@
-
-
 fun main() {
     val atm = ATM()
 
