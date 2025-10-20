@@ -24,7 +24,9 @@ open class UserManager {
         userBalances[userName] = mutableMapOf(
             "RUB" to 10000000000L,
             "USD" to 10000000000L,
-            "EUR" to 10000000000L
+            "EUR" to 10000000000L,
+            "BTC" to 0L,
+            "ETH" to 0L
         )
     }
 

@@ -8,16 +8,16 @@ class ATM : UserManager() {
     private fun currenciesInitialization() {
 
         val currencies = listOf(
-            ExchangeLogic("RUB", "USD") to 8082L,
-            ExchangeLogic("RUB", "EUR") to 9371L,
-            ExchangeLogic("USD", "EUR") to 116L,
-            ExchangeLogic("RUB", "BTC") to 3_500_000_000L,
-            ExchangeLogic("RUB", "ETH") to 200_000_000L,
-            ExchangeLogic("USD", "BTC") to 43_000_000L,
-            ExchangeLogic("USD", "ETH") to 2_500_000L,
-            ExchangeLogic("EUR", "BTC") to 39_000_000L,
-            ExchangeLogic("EUR", "ETH") to 2_200_000L,
-            ExchangeLogic("BTC", "ETH") to 58_000_000L
+            ExchangeLogic("RUB", "USD") to 8140L,
+            ExchangeLogic("RUB", "EUR") to 9494L,
+            ExchangeLogic("USD", "EUR") to 117L,
+            ExchangeLogic("RUB", "BTC") to 905361581L,
+            ExchangeLogic("RUB", "ETH") to 33071731L,
+            ExchangeLogic("USD", "BTC") to 11123100L,
+            ExchangeLogic("USD", "ETH") to 405754L,
+            ExchangeLogic("EUR", "BTC") to 9537206L,
+            ExchangeLogic("EUR", "ETH") to 348385L,
+            ExchangeLogic("BTC", "ETH") to 3646000L
         )
 
         exchangeRates.putAll(currencies)
